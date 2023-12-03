@@ -4,7 +4,7 @@ from PIL import Image
 import pathlib
 import sys
 
-st.set_page_config(page_title="Sparky Websites Demo", page_icon="🐶")
+st.set_page_config(page_title="Sparky Dashboard", page_icon="🐶")
 
 # This adds the path of the …/src folder
 # to the PYTHONPATH variable
@@ -15,6 +15,10 @@ st.write("# Bienvenido al Dashboard interactivo de Sparky! 👋 🐶 👋 ")
 
 st.markdown(
         """
+        Este Dashboard fue hecho para Emotions con ❤️.
+
+        ## ¿Qué es Sparky?
+
         Sparky es un fiel guardián de tu organización. Es un software que permite monitorear el uso de un equipo de tipo PC.
         Sparky tiene los siguientes módulos de monitoreo:
         - **Sparky Apps** Aplicaciones que se usan en el equipo. Ejemplos de aplicaciones son Excel, Word, etc.
