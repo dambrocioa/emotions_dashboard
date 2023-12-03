@@ -47,15 +47,6 @@ st.markdown(
         - Alertas ante palabras clave encontradas en nombres de archivos
         - Dashboard de desempeño de un área o equipo de trabajo en el que un manager/gerente de área podría visualizar ciertos módulos de su equipo a cargo.
         - Dashboard de desempeño personal. Un usuario puede tener su propio dashboard para ver sus horas de check in / check out. Podría tener sus metas de semana y el avance logrado en la misma. 
-        - Contraste de horas reportadas de check in / check out contra la actividad en la PC.
-    
-
-        ## Planes y precios
+        
     """
     )
-
-
-
-image = Image.open('src/interactive/images/planes.png')
-
-st.image(image, caption='Planes')
