@@ -16,7 +16,7 @@ st.set_page_config(page_title="Sparky Words", page_icon="💬")
 sys.path.append(str(pathlib.Path().absolute()).split("/src")[0] + "/src")
 
 from mymodule.sparky_NLP import get_ocurrences
-#st.write(sys.path)
+st.write(sys.path)
 
 #ANOTATED TEXT PARAMETERS
 parameters.SHOW_LABEL_SEPARATOR = True
