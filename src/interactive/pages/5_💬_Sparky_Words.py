@@ -14,7 +14,7 @@ st.set_page_config(page_title="Sparky Words", page_icon="💬")
 # This adds the path of the …/src folder
 # to the PYTHONPATH variable
 sys.path.append(str(pathlib.Path().absolute()).split("/src")[0] + "/src")
-#st.write(sys.path)
+st.write(sys.path)
 #sys.path.append("src/")
 from mymodule.sparky_NLP import get_ocurrences
 #st.write(sys.path)
