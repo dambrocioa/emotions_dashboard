@@ -4,11 +4,10 @@ from streamlit_tags import st_tags, st_tags_sidebar
 from st_files_connection import FilesConnection
 from streamlit_echarts import JsCode
 from streamlit_echarts import st_echarts
+import datetime
 import pandas
 import pathlib
 import sys
-import datetime
-import humanize
 
 
 st.set_page_config(page_title="Sparky Words", page_icon="💬")
