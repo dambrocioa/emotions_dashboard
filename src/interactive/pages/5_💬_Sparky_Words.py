@@ -37,7 +37,7 @@ st.write(
 @st.cache_data
 def get_data():
     conn = st.experimental_connection('s3', type=FilesConnection)
-    data = conn.read("sparky-final-summaries/KLS/SPARKY_WORDS/summary.csv", input_format="csv", ttl=600)
+    data = conn.read("sparky-final-summaries/Demo/SPARKY_WORDS/summary.csv", input_format="csv", ttl=600)
     data = data.drop_duplicates()
     users_names = {"user_kl_01":"Aidée Alonso","user_kl_02":"user_kl_02","user_kl_03":"Angelica Yunuen Olivares",
         "user_kl_04":"Eli Navarro","user_kl_05":"Mariana Daniela Mendoza","user_kl_06":"Beatriz Villa",
