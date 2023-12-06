@@ -1,12 +1,3 @@
-import pathlib
-import sys
-
-# This adds the path of the …/src folder
-# to the PYTHONPATH variable
-sys.path.append(str(pathlib.Path().absolute()).split("/src")[0] + "/src")
-#st.write(sys.path)
-#sys.path.append("src/")
-
 import streamlit as st
 from annotated_text import annotated_text, parameters
 from streamlit_tags import st_tags, st_tags_sidebar
@@ -14,6 +5,15 @@ from st_files_connection import FilesConnection
 from streamlit_echarts import JsCode
 from streamlit_echarts import st_echarts
 import pandas
+import pathlib
+import sys
+
+
+st.set_page_config(page_title="Sparky Words", page_icon="💬")
+
+# This adds the path of the …/src folder
+# to the PYTHONPATH variable
+sys.path.append(str(pathlib.Path().absolute()).split("/src")[0] + "/src")
 
 from mymodule.sparky_NLP import get_ocurrences
 #st.write(sys.path)
