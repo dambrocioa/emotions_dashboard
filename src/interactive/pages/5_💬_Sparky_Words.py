@@ -10,7 +10,7 @@ import sys
 
 
 st.set_page_config(page_title="Sparky Words", page_icon="💬")
-
+st.write(sys.path)
 # This adds the path of the …/src folder
 # to the PYTHONPATH variable
 sys.path.append(str(pathlib.Path().absolute()).split("/src")[0] + "/src")
