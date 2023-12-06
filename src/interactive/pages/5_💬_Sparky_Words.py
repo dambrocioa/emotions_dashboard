@@ -16,7 +16,7 @@ st.write(sys.path)
 sys.path.append(str(pathlib.Path().absolute()).split("/src")[0] + "/src")
 sys.path.append('/mount/src/sparky_dashboard/src/')
 st.write(sys.path)
-from src.mymodule.sparky_NLP import get_ocurrences
+from mymodule.sparky_NLP import get_ocurrences
 #st.write(sys.path)
 
 st.set_page_config(page_title="Sparky Words", page_icon="💬")
