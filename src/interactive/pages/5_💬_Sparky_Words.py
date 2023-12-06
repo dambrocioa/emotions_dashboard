@@ -104,11 +104,22 @@ def get_dates_from_week_info(weeks):
 
 # The side bar that contains radio buttons for selection of charts-----------------------------------------------------------
 with st.sidebar:
+    def update_selected_user():
+        st.session_state["selected_user"] = st.session_state['selected_user_files']
     st.header('Persona')
     users = tuple(data['user_name'].unique())
-    user_selected = st.radio("Selecciona un usuario",users)
-    df = data[data['user_name']==user_selected]
+    
+    if 'selected_user' not in st.session_state:
+        st.session_state["selected_user"] = users[0]
+    else:
+        if st.session_state["selected_user"] in users:
+            st.session_state['selected_user_files'] = st.session_state["selected_user"]
+        else:
+            st.write('no user found')
+            st.session_state['selected_user_files'] = users[0]
 
+    user_selected = st.radio("Selecciona un usuario",(users),key="selected_user_files",on_change=update_selected_user)
+    df = data[data['user_name']==user_selected]
 
     #st.header('Fecha')
     #dates = df['short_start_time'].unique()
