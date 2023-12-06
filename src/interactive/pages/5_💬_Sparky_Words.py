@@ -39,15 +39,7 @@ def get_data():
     conn = st.experimental_connection('s3', type=FilesConnection)
     data = conn.read("sparky-final-summaries/Demo/SPARKY_WORDS/summary.csv", input_format="csv", ttl=600)
     data = data.drop_duplicates()
-    users_names = {"user_kl_01":"Aidée Alonso","user_kl_02":"user_kl_02","user_kl_03":"Angelica Yunuen Olivares",
-        "user_kl_04":"Eli Navarro","user_kl_05":"Mariana Daniela Mendoza","user_kl_06":"Beatriz Villa",
-        "user_kl_07":"Mayra Murrieta","user_kl_08":"Cynthia Elizabeth Domínguez","user_kl_09":"Araceli Flores",
-        "user_kl_10":"Gabriela Hernández","user_kl_11":"Luis Armando Zerón","user_kl_12":"Jazmín Álvarez",
-        "user_kl_13":"Rodrigo Jiménez","user_kl_14":"Eli Navarro","user_kl_15":"Norma Angélica Amador",
-        "user_kl_16":"Marlene Uscanga","user_kl_17":"Aidée Alonso","user_kl_18":"Cynthia Elizabeth Domínguez",
-        "user_kl_19":"UNKNOWN","user_kl_20":"Amairan","user_kl_21":"Madeleyn",
-        "user_kl_22":"Paola Valencia","user_kl_23":"Paola (computadora Lenovo de pruebas)","user_kl_24":"Andrés",
-        "user_kl_25":"Valeria Casas","user_kl_26":"Beatriz Villa","user_kl_27":"Jorge Kuri", "user_kl_28":"Katya"}
+    users_names = {"user_kl_13":"13","user_kl_24":"24","user_kl_test":"test"}
 
     data["user_name"] = [users_names[user_key] for user_key in data["user"]]
     data = data[data['user_name']!='UNKNOWN']
