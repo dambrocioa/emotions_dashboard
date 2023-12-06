@@ -30,97 +30,130 @@ st.write(
     """Sparky Words es un módulo de Sparky que permite registrar 
     ocurrencias de palabras clave encontradas en el texto que es tecleado en la computadora. 
     Algunos casos de uso son detección de acoso o cyberbullying, robo de información en beneficio de terceros.
-    En este demo, esta información se actualiza cada semana. Es posible tener esta información 
-    en tiempo real (con un retraso de algunos minutos).
-    Para este demo usamos las palabras clave siguientes: """)
+    Actualmente esta información se actualiza una vez al día a la media noche. Es posible tener esta información 
+    en tiempo real (con un retraso de algunos minutos). Para esto se debe contratar la opción adicional "tiempo real"
+    """)
 
 @st.cache_data
 def get_data():
     conn = st.experimental_connection('s3', type=FilesConnection)
-    data = conn.read("sparky-final-summaries/Demo/SPARKY_WORDS/summary.csv", input_format="csv", ttl=600)
+    data = conn.read("sparky-final-summaries/KLS/SPARKY_WORDS/summary.csv", input_format="csv", ttl=600)
     data = data.drop_duplicates()
+    users_names = {"user_kl_01":"Aidée Alonso","user_kl_02":"user_kl_02","user_kl_03":"Angelica Yunuen Olivares",
+        "user_kl_04":"Eli Navarro","user_kl_05":"Mariana Daniela Mendoza","user_kl_06":"Beatriz Villa",
+        "user_kl_07":"Mayra Murrieta","user_kl_08":"Cynthia Elizabeth Domínguez","user_kl_09":"Araceli Flores",
+        "user_kl_10":"Gabriela Hernández","user_kl_11":"Luis Armando Zerón","user_kl_12":"Jazmín Álvarez",
+        "user_kl_13":"Rodrigo Jiménez","user_kl_14":"Eli Navarro","user_kl_15":"Norma Angélica Amador",
+        "user_kl_16":"Marlene Uscanga","user_kl_17":"Aidée Alonso","user_kl_18":"Cynthia Elizabeth Domínguez",
+        "user_kl_19":"UNKNOWN","user_kl_20":"Amairan","user_kl_21":"Madeleyn",
+        "user_kl_22":"Paola Valencia","user_kl_23":"Paola (computadora Lenovo de pruebas)","user_kl_24":"Andrés",
+        "user_kl_25":"Valeria Casas","user_kl_26":"Beatriz Villa","user_kl_27":"Jorge Kuri", "user_kl_28":"Katya"}
+
+    data["user_name"] = [users_names[user_key] for user_key in data["user"]]
+    data = data[data['user_name']!='UNKNOWN']
+    
     return  data
 
 data = get_data()
 
 
+#def get_complete_corpus(my_dataframe):
+#    corpus = {}
+#    for index, row in my_dataframe.iterrows():
+#        date = row["short_start_time"]
+#        if date not in corpus.keys():
+#            corpus[date] = ''
+#        corpus[date] = corpus[date] + row["words"]+"\n"
+#    return corpus
+
+def get_formatted_corpus_as_txt(corpus):
+    # receives a list of dicts, each one with the following keys:
+    #| "user" | "date" "| short_date" | "week_info" | "original_message" | "cleaned_message"|
+    #
+    # returns a dict 
+    #| "date": [string]
+    formatted_corpus = {}
+    for row in corpus:
+        date = row["short_date"]
+        if date not in formatted_corpus.keys():
+            formatted_corpus[date] = ''
+        formatted_corpus[date] = formatted_corpus[date] + row["cleaned_message"]+"\n"
+    return formatted_corpus
+
+def get_formatted_corpus_as_df(corpus):
+    # receives a list of dicts, each one with the following keys:
+    #| "user" | "date" "| short_date" | "week_info" | "original_message" | "cleaned_message"|
+    #
+    # returns a dict 
+    # "data" dataframe 
+    # each dataframe contains | "user" | "date" "| short_date" | "cleaned_message"|
+    formatted_corpus_df = {}
+    for row in corpus:
+        date = row["short_date"]
+        if date not in formatted_corpus_df.keys():
+            formatted_corpus_df[date] = []
+        formatted_corpus_df[date].append({"user_name":row["user_name"],"date":row["date"],"texto":row["cleaned_message"]})
+
+    for date in formatted_corpus_df.keys():
+        list_of_dicts = formatted_corpus_df[date]
+        formatted_corpus_df[date] = pandas.DataFrame.from_records(list_of_dicts)
+    return formatted_corpus_df
+
+def get_dates_from_week_info(weeks):
+    dates = []
+    for week_start_date in weeks:
+        week_start_date_obj = datetime.datetime.strptime(week_start_date,"%Y-%m-%d")
+        for n in range(0,7):
+            date_obj = week_start_date_obj + datetime.timedelta(days=n)
+            date_str = date_obj.strftime('%Y-%m-%d')
+            dates.append(date_str)
+    return dates
+
 # The side bar that contains radio buttons for selection of charts-----------------------------------------------------------
 with st.sidebar:
     st.header('Persona')
-    users = tuple(data['user'].unique())
+    users = tuple(data['user_name'].unique())
     user_selected = st.radio("Selecciona un usuario",users)
-    df = data[data['user']==user_selected]
+    df = data[data['user_name']==user_selected]
 
 
-    st.header('Fecha')
-    dates = df['short_start_time'].unique()
-    selected_dates = st.multiselect('Selecciona una o varias fechas',dates, dates)
+    #st.header('Fecha')
+    #dates = df['short_start_time'].unique()
+    #selected_dates = st.multiselect('Selecciona una o varias fechas',dates, dates)
+    #df = df[df['short_start_time'].isin(selected_dates)]
+
+    st.header('Semana')
+    weeks = df['week_info'].unique()
+    selected_weeks = st.multiselect('Selecciona una o varias semanas',weeks, weeks)
+    selected_dates = get_dates_from_week_info(selected_weeks)
     df = df[df['short_start_time'].isin(selected_dates)]
 
 
 ## This container will be displayed below the text above-----------------------------------------------------------
+annotated_text(tuple(["Esta información se actualiza cada 24 horas a la media noche.","","#fea"]))
+annotated_text(tuple(["Esto es, todos los días a la media noche se agrega a este panel la información generada por el usuario durante ese mismo día.","","#fea"]))
+
 with st.container():
-    ##st.header("¿Qué están escribiendo?")
-    ##st.info("""Puedes visualizar si existe una ocurrencia de alguna palabra""")
-
-    texto = """ Instrucciones para volar
-        El volar es un arte o, mejor dicho, un don.
-        El don consiste en aprender a tirarse al suelo y fallar.
-        La primer parte es fácil. Lo único que se necesita es simplemente la habilidad de tirarse hacia adelante con todo el peso del cuerpo, y buena voluntad para que a uno no le importe que duela. Es decir, dolerá si no se logra evitar el suelo. La mayoría de la gente no consigue evitar el suelo, y si de verdad lo intenta como es debido, lo más probable es que no logre evitarlo de ninguna manera.
-        Está claro que la segunda parte, la de evitar el suelo, es la que presenta dificultades.
-        El primer problema es que hay que evitar el suelo por accidente. No es bueno tratar de evitarlo deliberadamente, porque no se conseguirá. Hay que distraer de golpe la atención con otra cosa cuando se está a medio camino, de manera que ya no se piense en caer, o en el suelo, o en cuánto le va a doler a uno si no logra evitarlo.
-        Es sumamente difícil distraer la atención de esas tres cosas durante la décima de segundo que uno tiene a su disposición. De ahí que fracasen la mayoría de las personas y que finalmente se sientan decepcionadas de este deporte estimulante y espectacular. Sin embargo, si se es lo suficientemente afortunado para quedar distraído justo en el momento crucial por, digamos, unas piernas espléndidas, por una bomba que estalle cerca o por la repentina visión de una especie sumamente rara de escarabajo que se arrastre junto a un hierbajo próximo, entonces, para sopresa propia, se evitará el suelo por completo y uno quedará flotando a pocos centímetros de él en una postura que podría parecer un tanto estúpida.
-        Es éste un momento de soberbia y delicada concentración.
-        Oscilar y flotar, flotar y oscilar.
-        Ignore toda consideración sobre su propio peso y déjese flotar más alto.
-        No escuche lo que alguien le diga en ese momento, porque es improbable que sea algo de provecho.
-        – ¡Santo Dios, no es posible que estés volando! – es el tipo de comentario que suele hacerse.
-        Es de importancia vital no creerlo, o ese alguien tendrá razón de pronto.
-        Flote cada vez más alto.
-        Intente unos descensos en picado, suaves al principio, luego flote a la deriva sobre las copas de los árboles respirando con normalidad.
-        NO SALUDE A NADIE.
-        Cuando haya hecho esto unas cuantas veces, descubrirá que el momento de distracción se logra cada vez con mayor facilidad.
-        Entonces aprenderá todo tipo de cosas sobre cómo dominar el vuelo, la velocidad, la capacidad de maniobra, y el truco consiste normalmente en no pensar demasiado en lo que uno quiere hacer, sino limitarse a dejar que ocurra como si fuese a suceder de todos modos.
-        También aprenderá a aterrizar como es debido, algo en que casi con seguridad fracasará, y de mala manera, al primer intento. 
-        Del libro: “La vida, el universo y todo lo demás” de Douglas Adams
-        """
-
-    def get_corpus(txt):
-        list_of_strings_to_analyse = texto.split(".")
-        list_of_strings_to_analyse = [string_item +'.' for string_item in list_of_strings_to_analyse]
-        return list_of_strings_to_analyse
-
-    def format_pattern(pattern):
-        return tuple([pattern, "found","#fea"])
-
-    #default corpus
-    list_of_strings_to_analyse = get_corpus(texto)
+    #st.header("¿Qué están escribiendo?")
+    #st.info("""Puedes visualizar si existe una ocurrencia de alguna palabra. Algunas plabras están precargadas, puedes quitar o agregar más.""")
 
     st.divider() 
-    st.markdown("## Paso 1: Introduzca un texto")
-    txt = st.text_area(label='Texto para hallar ocurrencias', 
-                     value=texto+'.',
-                     placeholder = 'Introduzca un texto',
-                     disabled=True)
-
-    st.divider() 
+    values = ["faby","fabi","siemens", "gamifi", "extern"]
+    st.markdown("## 1. Puede buscar palabras exactas en el texto tecleado por el usuario")
     keywords = st_tags(
-                label='## Paso 2: Introduzca las palabras que quiere buscar:',
+                label='### Seleccione las palabras exactas que desea buscar',
                 text='Escribe una palabra y da Enter',
-                value=['demas','volar','alas'],
+                value=values,
                 suggestions=[],
                 maxtags = -1,
                 key='1')
     
-    list_of_strings_to_analyse = get_corpus(txt)
-
-    
     st.divider() 
-    st.markdown('## Paso 3: Observe los resultados')
+    st.markdown('### Resultados')
     
     patterns_detected = []
     patterns_occurrences = {}
-    patterns_detected,patterns_occurrences = get_ocurrences(list_of_strings_to_analyse=list_of_strings_to_analyse,patterns_to_find=keywords,size=2)
+    corpus,patterns_detected,patterns_occurrences = get_ocurrences(data=df,patterns_to_find=keywords,size=10)
     
     st.markdown('#### Resumen de Resultados')
         
@@ -139,10 +172,12 @@ with st.container():
                 st.write(f'##### {pattern}')
                 ocurrences = patterns_detected[pattern]
 
-                for element in ocurrences:                    
+                for element in ocurrences:
+                    fecha_de_ocurrencia = element["date"]    
                     text_to_display = element["message_formatted"]
                     
                     #Display ocurrence details
+                    st.write(f'###### Encontrado el {fecha_de_ocurrencia}')
                     annotated_text(text_to_display)
                     with st.expander("Ver contexto"):
                         st.markdown('###### Antes escribió')
@@ -151,5 +186,32 @@ with st.container():
                         st.markdown('###### Después escribió')
                         st.write(element["lines_after"])
 
-        
+    st.divider()
+    st.markdown('## 2. Panorama completo')
+    st.markdown('#### Puede ver todo el texto tecleado por el usuario por fecha')
+    #Format corpus as list of strings to display in text area below
+    formatted_corpus = get_formatted_corpus_as_txt(corpus)
+    
+    #Format corpus as data frame to display it in a Table
+    formatted_corpus_df = get_formatted_corpus_as_df(corpus)
+    
+    #st.markdown("## Texto completo generado por el usuario en el intervalo de fechas seleccionado")
+    #for date in selected_dates:
+    #    formatted_corpus_by_date = formatted_corpus[date]
+    #    txt = st.text_area(label=f'Texto tecleado por el usuario durante el día {date}', 
+    #                 value=formatted_corpus_by_date+'.',
+    #                 placeholder = 'Introduzca un texto',
+    #                 disabled=True)
 
+
+    for date in selected_dates:
+        if date in formatted_corpus.keys():
+            formatted_corpus_by_date = formatted_corpus[date]
+            txt = st.text_area(label=f'Texto tecleado por el usuario durante el día {date}', 
+                         value=formatted_corpus_by_date+'.',
+                         placeholder = 'Introduzca un texto',
+                         disabled=True)
+            with st.expander("Ver más detalle (hora específica)"):
+                st.table(formatted_corpus_df[date])
+        else:
+            st.write(f"Sin datos para el usuario seleccionado, en la fecha del {date}")
