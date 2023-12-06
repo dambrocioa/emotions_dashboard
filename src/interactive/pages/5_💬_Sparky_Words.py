@@ -119,7 +119,7 @@ with st.sidebar:
             st.session_state['selected_user_files'] = users[0]
 
     user_selected = st.radio("Selecciona un usuario",(users),key="selected_user_files",on_change=update_selected_user)
-    df = data[data['user_name']==user_selected]
+    df = data[data['user']==user_selected]
 
     #st.header('Fecha')
     #dates = df['short_start_time'].unique()
