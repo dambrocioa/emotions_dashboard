@@ -107,7 +107,7 @@ with st.sidebar:
     def update_selected_user():
         st.session_state["selected_user"] = st.session_state['selected_user_files']
     st.header('Persona')
-    users = tuple(data['user_name'].unique())
+    users = tuple(data['user'].unique())
     
     if 'selected_user' not in st.session_state:
         st.session_state["selected_user"] = users[0]
