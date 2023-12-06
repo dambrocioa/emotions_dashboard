@@ -14,7 +14,7 @@ st.write(sys.path)
 # This adds the path of the …/src folder
 # to the PYTHONPATH variable
 sys.path.append(str(pathlib.Path().absolute()).split("/src")[0] + "/src")
-sys.path.append('src/')
+sys.path.append('src/my_module/')
 st.write(sys.path)
 from mymodule.sparky_NLP import get_ocurrences
 #st.write(sys.path)
