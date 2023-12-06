@@ -39,7 +39,7 @@ def get_data():
     conn = st.experimental_connection('s3', type=FilesConnection)
     data = conn.read("sparky-final-summaries/Demo/SPARKY_WORDS/summary.csv", input_format="csv", ttl=600)
     data = data.drop_duplicates()
-    users_names = {"user_kl_13":"13","user_kl_24":"24","user_kl_test":"test"}
+    users_names = {"user_kl_13":"13","user_kl_24":"24","user_kl_test":"test","user_kl_test_win":"test_win"}
 
     data["user_name"] = [users_names[user_key] for user_key in data["user"]]
     data = data[data['user_name']!='UNKNOWN']
