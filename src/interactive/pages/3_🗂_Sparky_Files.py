@@ -26,7 +26,7 @@ st.write(
 @st.cache_data
 def get_data_files():
     conn = st.experimental_connection('s3', type=FilesConnection)
-    data_files = conn.read("sparky-final-summaries/Demo/SPARKY_FILES/summary.csv", input_format="csv", ttl=600)
+    data_files = conn.read("sparky-final-summaries/Emotions/SPARKY_FILES/summary.csv", input_format="csv", ttl=600)
     data_files = data_files.drop_duplicates()
 
     #create date time obje column

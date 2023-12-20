@@ -21,7 +21,7 @@ st.write(
 @st.cache_data
 def get_data_hours():
     conn = st.experimental_connection('s3', type=FilesConnection)
-    data_hours = conn.read("sparky-final-summaries/Demo/SPARKY_HOURS/summary.csv", input_format="csv", ttl=600)
+    data_hours = conn.read("sparky-final-summaries/Emotions/SPARKY_HOURS/summary.csv", input_format="csv", ttl=600)
     data_hours = data_hours.drop_duplicates()
     
     data_hours['date_obj'] = pandas.to_datetime(data_hours['date'],format='%Y-%m-%d %H:%M:%S')#.dt.time

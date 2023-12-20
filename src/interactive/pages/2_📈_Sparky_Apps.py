@@ -23,7 +23,7 @@ st.write(
 @st.cache_data
 def get_data_apps():
     conn = st.experimental_connection('s3', type=FilesConnection)
-    data_apps = conn.read("sparky-final-summaries/Demo/SPARKY_APPS/summary.csv", input_format="csv", ttl=600)
+    data_apps = conn.read("sparky-final-summaries/Emotions/SPARKY_APPS/summary.csv", input_format="csv", ttl=600)
     data_apps = data_apps.drop_duplicates()
     return  data_apps
 
