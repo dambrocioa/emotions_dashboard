@@ -24,7 +24,7 @@ st.markdown(
         - **Sparky Apps** Aplicaciones que se usan en el equipo. Ejemplos de aplicaciones son Excel, Word, etc.
         - **Sparky Files** Archivos que se crean, modifican, se mueven de carpeta o se borran.
         - **Sparky Websites** Websites visitados en el equipo, en Chrome, Edge y Firefox.
-        - **Sparky Hours** Es un reloj checador, permite al usuario de la PC registrar su hora de entrada y de salida.
+        - **Sparky Hours** Es un reloj checador, permite al usuario de la PC registrar su hora de entrada y de salida y así, tanto el coloaborador como la gerencia pueden tener registro de entradas y salidas de todos los colaboradores. 
         - **Sparky Words** Es un buscador de palabras clave, permite monitorear las palabras tecleadas en la PC. 
         
         Estos módulos se instalan en el equipo o PC y de manera discreta permiten el moniteo. 
