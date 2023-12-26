@@ -8,6 +8,9 @@ import numpy as np
 import pandas
 import json
 import plotly.express as px
+from annotated_text import annotated_text, parameters
+import datetime
+import humanize
 
 st.set_page_config(page_title="Sparky Hours", page_icon="⏰")
 
@@ -18,18 +21,55 @@ st.write(
         de unsa sesión de trabajo."""
 )
 
+#ANOTATED TEXT PARAMETERS
+parameters.SHOW_LABEL_SEPARATOR = True
+parameters.BORDER_RADIUS = 0
+parameters.PADDING = "0 0.25rem"
+
+users_names = {"user_kl_29":"Adrian Frydman"}
+
 @st.cache_data
-def get_data_hours():
+def get_data_hours(users_names):
     conn = st.experimental_connection('s3', type=FilesConnection)
     data_hours = conn.read("sparky-final-summaries/Emotions/SPARKY_HOURS/summary.csv", input_format="csv", ttl=600)
     data_hours = data_hours.drop_duplicates()
     
     data_hours['date_obj'] = pandas.to_datetime(data_hours['date'],format='%Y-%m-%d %H:%M:%S')#.dt.time
-    data_hours['time'] = data_hours['date_obj'].dt.time
+    data_hours["user_name"] = [users_names[user_key] for user_key in data_hours["user"]]
+    data_hours = data_hours[data_hours['user_name']!='UNKNOWN']
+
+    data_hours["humanized_week_info"] = ["Semana que inició en "+humanize.naturaldate(datetime.datetime.strptime(week_info,"%Y-%m-%d")) for week_info in data_hours["week_info"]]
+    data_hours["humanized_short_date"] = [humanize.naturaldate(datetime.datetime.strptime(short_date,"%Y-%m-%d")) for short_date in data_hours["short_date"]]
     
     return data_hours
 
-data_hours = get_data_hours()
+@st.cache_data
+def get_data_activity(users_names):
+    conn = st.experimental_connection('s3', type=FilesConnection)
+    data = conn.read("sparky-final-summaries/Emotions/SPARKY_WORDS/summary.csv", input_format="csv", ttl=600)
+    data = data.drop_duplicates()
+
+    data["user_name"] = [users_names[user_key] for user_key in data["user"]]
+    data = data[data['user_name']!='UNKNOWN']
+
+    # creating new column for len
+    # passing values through str.len()
+    data["actions"]= data["words"].str.len()
+
+    # dropping null value columns to avoid errors
+    #data =  data.dropna()
+    #data = data.dropna(subset=['words','start_date'])
+
+    data['start_time'] = pandas.to_datetime(data['start_time'],format='%Y-%m-%d %H:%M:%S')
+
+    data["humanized_week_info"] = ["Semana que inició en " + humanize.naturaldate(datetime.datetime.strptime(week_info,"%Y-%m-%d")) for week_info in data["week_info"]]
+    #data["humanized_short_start_time"] = [humanize.naturaldate(datetime.datetime.strptime(short_start_time,"%Y-%m-%d")) for short_start_time in data["short_start_time"]]
+    
+    #poner un contador de acciones de mouse
+    return  data
+
+data_hours = get_data_hours(users_names)
+data_activity = get_data_activity(users_names)
 
 
 # The side bar that contains radio buttons for selection of charts-----------------------------------------------------------
